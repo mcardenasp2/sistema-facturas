@@ -7,7 +7,7 @@
         
         <select v-if="grupo.tipo !== 'agua'" v-model="grupo.rubroId" class="rubro-select" @change="limpiarLineas">
           <option value="">-- Seleccione un Rubro --</option>
-          <option v-for="r in rubros" :key="r.id" :value="r.id">{{ r.nombre }}</option>
+          <option v-for="r in maestroRubros" :key="r.codigo" :value="r.codigo">{{ r.nombre }}</option>
         </select>
         
         <div v-else class="rubro-locked">
@@ -68,7 +68,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { rubros } from '../../data/mockData'
+import { maestroRubros } from '../../data/mockData'
 import LineaDetalle from './LineaDetalle.vue'
 import GrupoAgua from './GrupoAgua.vue'
 
@@ -94,7 +94,8 @@ const agregarLinea = () => {
     cantidad: 0,
     valorUnitario: 0,
     total: 0,
-    archivoAdjutando: false
+    archivoAdjutando: false,
+    intervalos: [{ inicio: '', fin: '' }]
   })
 }
 

@@ -4,14 +4,13 @@
     <div class="col-md">
       <select v-model="linea.laborId" class="form-control" @change="onLaborChange">
         <option value="">-- Labor --</option>
-        <option v-for="l in laboresFiltradas" :key="l.laborId" :value="l.laborId">{{ l.laborNombre }}</option>
+        <option v-for="l in laboresFiltradas" :key="l.id" :value="l.nombre">{{ l.nombre }}</option>
       </select>
     </div>
     <div class="col-md">
-      <select v-model="linea.laborDetalle" class="form-control" :disabled="!linea.laborId">
+      <select v-model="linea.laborDetalle" class="form-control" :disabled="!linea.laborId" @change="onDetalleChange">
         <option value="">-- Detalle --</option>
-        <option value="DET1">Detalle Específico 1</option>
-        <option value="DET2">Detalle Específico 2</option>
+        <option v-for="(d, idx) in detallesFiltrados" :key="idx" :value="d.nombre">{{ d.nombre }}</option>
       </select>
     </div>
     <div class="col-sm">
@@ -28,8 +27,11 @@
       </select>
     </div>
     <div class="col-sm">
-      <div class="input-spinner">
+      <div class="input-spinner" v-if="rubroId !== 'MAQ'">
         <input type="number" v-model.number="linea.cantidad" class="form-control text-right" @input="calcularTotal" min="0" />
+      </div>
+      <div class="input-spinner" v-else>
+        <input type="number" readonly :value="linea.cantidad" class="form-control text-right readonly-input" title="Calculado automáticamente por intervalos" />
       </div>
     </div>
     <div class="col-sm text-center">
@@ -46,6 +48,20 @@
       <button class="icon-btn btn-gray-outline" @click="intentarEliminar" title="Eliminar Línea"><i class='bx bx-trash' style="font-size: 16px;"></i></button>
     </div>
   </div>
+
+  <!-- SUB-FILA ESPECIAL PARA MAQUINARIA (INTERVALOS DE TIEMPO) -->
+  <div class="maquinaria-horarios" v-if="rubroId === 'MAQ'">
+    <div class="horarios-header"><i class='bx bx-time'></i> Intervalos de Trabajo (Calcula Cantidad de Horas Automáticamente)</div>
+    <div class="horarios-list">
+      <div class="horario-item" v-for="(h, idx) in (linea.intervalos || [])" :key="idx">
+        <input type="time" v-model="h.inicio" class="form-control time-input" @change="calcularHorasMaquinaria" />
+        <span class="horario-sep">a</span>
+        <input type="time" v-model="h.fin" class="form-control time-input" @change="calcularHorasMaquinaria" />
+        <button class="icon-btn btn-gray-outline ml-2" @click="removerIntervalo(idx)" title="Remover intervalo"><i class='bx bx-x'></i></button>
+      </div>
+    </div>
+    <button class="btn-text add-time-btn" @click="agregarIntervalo">+ Añadir Intervalo</button>
+  </div>
   <div class="archivo-simulado" v-if="linea.archivoAdjutando">
     <small><i class='bx bx-check-double'></i> Comprobante_adjunto.pdf</small>
   </div>
@@ -53,7 +69,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { labores } from '../../data/mockData'
+import { maestroRubros } from '../../data/mockData'
 
 const props = defineProps({
   modelValue: Object,
@@ -70,13 +86,25 @@ const linea = computed({
 
 const laboresFiltradas = computed(() => {
   if (!props.rubroId) return []
-  return labores.filter(l => l.rubroId === props.rubroId)
+  const rubro = maestroRubros.find(r => r.codigo === props.rubroId)
+  return rubro ? rubro.labores : []
+})
+
+const detallesFiltrados = computed(() => {
+  if (!linea.value.laborId) return []
+  const labor = laboresFiltradas.value.find(l => l.nombre === linea.value.laborId)
+  return labor ? labor.detalles : []
 })
 
 const onLaborChange = () => {
-  const labor = labores.find(l => l.laborId === linea.value.laborId && l.rubroId === props.rubroId)
-  if (labor) {
-    linea.value.metrica = labor.metrica
+  linea.value.laborDetalle = ''
+  linea.value.metrica = ''
+}
+
+const onDetalleChange = () => {
+  const detalle = detallesFiltrados.value.find(d => d.nombre === linea.value.laborDetalle)
+  if (detalle) {
+    linea.value.metrica = detalle.metrica
   } else {
     linea.value.metrica = ''
   }
@@ -108,6 +136,38 @@ const simularArchivo = () => {
 
 const intentarEliminar = () => {
   emit('eliminar', props.index)
+}
+
+// LOGICA ESPECIAL DE MAQUINARIA
+const agregarIntervalo = () => {
+  if (!linea.value.intervalos) linea.value.intervalos = []
+  linea.value.intervalos.push({ inicio: '', fin: '' })
+}
+
+const removerIntervalo = (idx) => {
+  if (linea.value.intervalos && linea.value.intervalos.length > 0) {
+    linea.value.intervalos.splice(idx, 1)
+    calcularHorasMaquinaria()
+  }
+}
+
+const calcularHorasMaquinaria = () => {
+  if (props.rubroId !== 'MAQ') return
+  let totalHoras = 0
+  if (linea.value.intervalos) {
+    linea.value.intervalos.forEach(h => {
+      if (h.inicio && h.fin) {
+        const [h1, m1] = h.inicio.split(':').map(Number)
+        const [h2, m2] = h.fin.split(':').map(Number)
+        let diff = (h2 * 60 + m2) - (h1 * 60 + m1)
+        if (diff > 0) {
+          totalHoras += diff / 60
+        }
+      }
+    })
+  }
+  linea.value.cantidad = parseFloat(totalHoras.toFixed(2))
+  calcularTotal()
 }
 </script>
 
@@ -189,6 +249,50 @@ const intentarEliminar = () => {
   color: #198754;
   margin-top: -5px;
   margin-bottom: 10px;
+}
+
+/* Estilos de Maquinaria (Intervalos) */
+.maquinaria-horarios {
+  margin: 0 15px 15px 15px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-left: 3px solid #f59f00;
+  border-radius: 4px;
+}
+.horarios-header {
+  font-size: 11px;
+  font-weight: bold;
+  color: #495057;
+  margin-bottom: 10px;
+}
+.horarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.horario-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.time-input {
+  width: 110px;
+}
+.horario-sep {
+  font-size: 12px;
+  color: #6c757d;
+}
+.add-time-btn {
+  margin-top: 10px;
+  color: #f59f00;
+  font-size: 12px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.add-time-btn:hover {
+  text-decoration: underline;
 }
 
 /* Grid columns for alignment with Group header */

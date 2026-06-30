@@ -21,10 +21,10 @@
       <div class="cabecera-form mb-4">
         <div class="row">
           <div class="col">
-            <label>TIPO DE REGISTRO:</label>
-            <select v-model="factura.tipo">
-              <option value="PROYECTO">PROYECTO</option>
-              <option value="FINCA">FINCA</option>
+            <label>FINCA:</label>
+            <select v-model="factura.fincaId">
+              <option value="">Seleccione una finca...</option>
+              <option v-for="f in fincas" :key="f.id" :value="f.id">{{ f.nombre }}</option>
             </select>
           </div>
           <div class="col">
@@ -91,12 +91,12 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import MainLayout from '../layouts/MainLayout.vue'
 import GrupoFactura from '../components/facturacion/GrupoFactura.vue'
-import { proveedores } from '../data/mockData'
+import { proveedores, fincas } from '../data/mockData'
 
 const router = useRouter()
 
 const factura = ref({
-  tipo: 'FINCA',
+  fincaId: '',
   proveedorId: '',
   ruc: '',
   fechaRegistro: '',
