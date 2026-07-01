@@ -21,17 +21,20 @@
 
     <!-- Títulos de Columnas (estilo tabla plana) - SOLO MODO ESTÁNDAR -->
     <div class="column-headers" v-if="grupo.rubroId && grupo.tipo !== 'agua'">
-      <div class="col-xs">#</div>
-      <div class="col-md">LABOR</div>
-      <div class="col-md">LABOR DETALLE</div>
-      <div class="col-sm">FECHA</div>
-      <div class="col-xs text-center">SEMANA</div>
-      <div class="col-sm">LOTE</div>
-      <div class="col-sm">CANTIDAD</div>
-      <div class="col-sm text-center">MÉTRICA</div>
-      <div class="col-sm">V. UNIT</div>
-      <div class="col-sm">TOTAL</div>
-      <div class="col-sm text-center"></div>
+      <div class="col-id text-center">#</div>
+      <div class="col-labor">LABOR</div>
+      <div class="col-detalle">LABOR DETALLE</div>
+      <div class="col-fecha">FECHA</div>
+      <div class="col-semana text-center">SEM</div>
+      <div class="col-lote">LOTE</div>
+      <div class="col-cant text-right">CANT</div>
+      <div class="col-metrica text-center">MET</div>
+      <div class="col-vunit text-right">V.UNIT</div>
+      <div class="col-iva-check text-center">IVA</div>
+      <div class="col-subt text-right">SUBT</div>
+      <div class="col-iva-val text-right">V.IVA</div>
+      <div class="col-total text-right">TOTAL</div>
+      <div class="col-acciones text-center"></div>
     </div>
 
     <!-- Líneas del Grupo - SOLO MODO ESTÁNDAR -->
@@ -93,6 +96,9 @@ const agregarLinea = () => {
     metrica: '',
     cantidad: 0,
     valorUnitario: 0,
+    aplicaIva: false,
+    subtotal: 0,
+    valorIva: 0,
     total: 0,
     archivoAdjutando: false,
     intervalos: [{ inicio: '', fin: '' }]
@@ -276,8 +282,21 @@ const intentarEliminarGrupo = () => {
 }
 
 /* Grid columns for alignment */
-.col-xs { width: 3%; }
-.col-sm { width: 9%; }
-.col-md { width: 17%; }
+.col-id { width: 3%; }
+.col-labor { width: 13%; }
+.col-detalle { width: 13%; }
+.col-fecha { width: 8%; }
+.col-semana { width: 4%; }
+.col-lote { width: 8%; }
+.col-cant { width: 6%; }
+.col-metrica { width: 5%; }
+.col-vunit { width: 7%; }
+.col-iva-check { width: 4%; }
+.col-subt { width: 7%; }
+.col-iva-val { width: 7%; }
+.col-total { width: 8%; }
+.col-acciones { width: 7%; }
+
 .text-center { text-align: center; }
+.text-right { text-align: right; }
 </style>

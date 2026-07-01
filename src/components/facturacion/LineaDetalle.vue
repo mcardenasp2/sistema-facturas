@@ -1,32 +1,32 @@
 <template>
   <div class="linea-row">
-    <div class="col-xs index-col">{{ index + 1 }}</div>
-    <div class="col-md">
+    <div class="col-id index-col">{{ index + 1 }}</div>
+    <div class="col-labor">
       <select v-model="linea.laborId" class="form-control" @change="onLaborChange">
         <option value="">-- Labor --</option>
         <option v-for="l in laboresFiltradas" :key="l.id" :value="l.nombre">{{ l.nombre }}</option>
       </select>
     </div>
-    <div class="col-md">
+    <div class="col-detalle">
       <select v-model="linea.laborDetalle" class="form-control" :disabled="!linea.laborId" @change="onDetalleChange">
         <option value="">-- Detalle --</option>
         <option v-for="(d, idx) in detallesFiltrados" :key="idx" :value="d.nombre">{{ d.nombre }}</option>
       </select>
     </div>
-    <div class="col-sm">
+    <div class="col-fecha">
       <input type="date" v-model="linea.fecha" class="form-control" @change="calcularSemana" />
     </div>
-    <div class="col-xs text-center">
+    <div class="col-semana text-center">
       <span class="read-text">{{ linea.semana }}</span>
     </div>
-    <div class="col-sm">
+    <div class="col-lote">
       <select v-model="linea.lote" class="form-control">
         <option value="">Lote...</option>
         <option value="LOTE-1A">Lote 1-A</option>
         <option value="LOTE-1B">Lote 1-B</option>
       </select>
     </div>
-    <div class="col-sm">
+    <div class="col-cant">
       <div class="input-spinner" v-if="rubroId !== 'MAQ'">
         <input type="number" v-model.number="linea.cantidad" class="form-control text-right" @input="calcularTotal" min="0" />
       </div>
@@ -34,16 +34,25 @@
         <input type="number" readonly :value="linea.cantidad" class="form-control text-right readonly-input" title="Calculado automáticamente por intervalos" />
       </div>
     </div>
-    <div class="col-sm text-center">
+    <div class="col-metrica text-center">
       <span class="badge-blue">{{ linea.metrica || '-' }}</span>
     </div>
-    <div class="col-sm">
+    <div class="col-vunit">
       <input type="number" step="0.01" v-model.number="linea.valorUnitario" class="form-control text-right" @input="calcularTotal" min="0" />
     </div>
-    <div class="col-sm">
-      <input type="text" readonly :value="'$' + linea.total.toFixed(2)" class="form-control readonly-input text-right total-text" />
+    <div class="col-iva-check text-center">
+      <input type="checkbox" v-model="linea.aplicaIva" @change="calcularTotal" class="form-check-input" />
     </div>
-    <div class="col-sm acciones-col">
+    <div class="col-subt text-right">
+      <span class="total-text">${{ (linea.subtotal || 0).toFixed(2) }}</span>
+    </div>
+    <div class="col-iva-val text-right">
+      <span class="total-text" :class="{'iva-active': linea.aplicaIva}">${{ (linea.valorIva || 0).toFixed(2) }}</span>
+    </div>
+    <div class="col-total text-right">
+      <input type="text" readonly :value="'$' + (linea.total || 0).toFixed(2)" class="form-control readonly-input text-right total-text" />
+    </div>
+    <div class="col-acciones acciones-col">
       <button class="icon-btn btn-gray" @click="simularArchivo" title="Adjuntar Archivo"><i class='bx bx-paperclip' style="font-size: 16px;"></i></button>
       <button class="icon-btn btn-gray-outline" @click="intentarEliminar" title="Eliminar Línea"><i class='bx bx-trash' style="font-size: 16px;"></i></button>
     </div>
@@ -127,7 +136,18 @@ const calcularSemana = () => {
 const calcularTotal = () => {
   const cant = linea.value.cantidad || 0
   const vu = linea.value.valorUnitario || 0
-  linea.value.total = cant * vu
+  const subtotal = cant * vu
+  
+  linea.value.subtotal = subtotal
+  
+  // Asumiendo IVA de 15%
+  if (linea.value.aplicaIva) {
+    linea.value.valorIva = subtotal * 0.15
+  } else {
+    linea.value.valorIva = 0
+  }
+  
+  linea.value.total = subtotal + linea.value.valorIva
 }
 
 const simularArchivo = () => {
@@ -295,8 +315,29 @@ const calcularHorasMaquinaria = () => {
   text-decoration: underline;
 }
 
-/* Grid columns for alignment with Group header */
-.col-xs { width: 3%; }
-.col-sm { width: 9%; }
-.col-md { width: 17%; }
+.iva-active {
+  color: #dc3545;
+}
+.form-check-input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Grid columns for alignment */
+.col-id { width: 3%; }
+.col-labor { width: 13%; }
+.col-detalle { width: 13%; }
+.col-fecha { width: 8%; }
+.col-semana { width: 4%; }
+.col-lote { width: 8%; }
+.col-cant { width: 6%; }
+.col-metrica { width: 5%; }
+.col-vunit { width: 7%; }
+.col-iva-check { width: 4%; }
+.col-subt { width: 7%; }
+.col-iva-val { width: 7%; }
+.col-total { width: 8%; }
+.col-acciones { width: 7%; }
 </style>
