@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <MainLayout>
     <div class="breadcrumb">
       INICIO / PROCESOS / FACTURACION
     </div>
@@ -51,12 +51,12 @@
             <td>
               <span :class="'status-badge status-' + factura.estadoId">{{ factura.estado }}</span>
             </td>
-            <td>
+             <td>
                <!-- Las acciones de cada fila cambian según el ROL -->
                <button class="btn-icon btn-blue" title="Editar" v-if="currentRole === 'admin' || currentRole === 'approver'">📝</button>
                <button class="btn-icon btn-red" title="Eliminar" v-if="currentRole === 'admin'">✖</button>
-               <button class="btn-icon btn-gray" title="Ver detalles" v-if="currentRole === 'viewer'">👁</button>
-            </td>
+               <button class="btn-icon btn-gray" title="Ver detalles" v-if="currentRole === 'viewer' || factura.estadoId === 'aprobado'" @click="openModal(factura)">👁</button>
+             </td>
           </tr>
         </tbody>
       </table>
@@ -73,16 +73,28 @@
             <button>»</button>
          </div>
       </div>
+      
+      <FacturaDetalleModal :show="showModal" :factura="selectedFactura" @close="showModal = false" />
     </div>
-  </div>
+  </MainLayout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import MainLayout from '../layouts/MainLayout.vue'
+import FacturaDetalleModal from '../components/facturacion/FacturaDetalleModal.vue'
 import { useRole } from '../composables/useRole'
 
 // Obtenemos el ROL global desde el composable
 const { currentRole } = useRole()
+
+const showModal = ref(false)
+const selectedFactura = ref(null)
+
+const openModal = (factura) => {
+  selectedFactura.value = factura
+  showModal.value = true
+}
 
 // Datos dinámicos de las facturas (simulados)
 const facturas = ref([

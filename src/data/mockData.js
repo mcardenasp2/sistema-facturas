@@ -8,6 +8,21 @@ export const fincas = [
   { id: 2, nombre: 'FINCA B - SECTOR SUR', codigo: 'F002' },
 ];
 
+export const cuentasContables = {
+  "MAQ": {
+    cuenta: "5.01.04.08.006",
+    descripcion: "Alquiler de Equipos y Maquinarias"
+  },
+  "MOC": {
+    cuenta: "5.01.01.02.004",
+    descripcion: "Servicios Contratistas"
+  },
+  "SER": {
+    cuenta: "5.01.01.02.005",
+    descripcion: "Servicios Varios"
+  }
+};
+
 /**
  * Maestro de Rubros y Labores estructurado de forma jerárquica.
  * Esta estructura facilita la lógica de cascada: Rubro -> Labor -> Detalle.

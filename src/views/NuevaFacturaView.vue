@@ -20,7 +20,7 @@
       <!-- Cabecera Maestro -->
       <div class="cabecera-form mb-4">
         <div class="row">
-          <div class="col">
+          <div class="col" v-if="!tieneGrupoAgua">
             <label>FINCA:</label>
             <select v-model="factura.fincaId">
               <option value="">Seleccione una finca...</option>
@@ -65,14 +65,6 @@
       </div>
       
       <div class="gran-total-container" v-if="factura.grupos.length > 0">
-        <div class="validador-global-container">
-          <span class="icon"><i class='bx bx-shield-quarter' style="font-size: 18px; vertical-align: middle;"></i></span> Validado por * 
-          <select v-model="factura.validadorId" class="validador-select">
-            <option value="">-- Seleccione el validador --</option>
-            <option value="1">Ing. Agrónomo</option>
-            <option value="2">Jefe de Operaciones</option>
-          </select>
-        </div>
         <div class="gran-total-box">
           <span class="total-label">GRAN TOTAL FACTURA</span>
           <span class="total-amount">${{ granTotalFactura.toFixed(2) }}</span>
@@ -101,11 +93,14 @@ const factura = ref({
   ruc: '',
   fechaRegistro: '',
   semanaAnio: '',
-  validadorId: '',
   grupos: []
 })
 
 let grupoIdCounter = 0
+
+const tieneGrupoAgua = computed(() => {
+  return factura.value.grupos.some(g => g.tipo === 'agua')
+})
 
 const onProveedorChange = () => {
   const prov = proveedores.find(p => p.id === factura.value.proveedorId)
@@ -267,29 +262,13 @@ const guardar = () => {
 }
 .gran-total-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 20px;
   background-color: #f8f9fa;
   padding: 15px 20px;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
-}
-.validador-global-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: bold;
-  color: #495057;
-}
-.validador-select {
-  padding: 8px 12px;
-  border: 1px solid #dc3545;
-  border-radius: 4px;
-  color: #495057;
-  font-weight: bold;
-  min-width: 250px;
 }
 .gran-total-box {
   background-color: #198754;

@@ -40,15 +40,6 @@
     <div class="col-vunit">
       <input type="number" step="0.01" v-model.number="linea.valorUnitario" class="form-control text-right" @input="calcularTotal" min="0" />
     </div>
-    <div class="col-iva-check text-center">
-      <input type="checkbox" v-model="linea.aplicaIva" @change="calcularTotal" class="form-check-input" />
-    </div>
-    <div class="col-subt text-right">
-      <span class="total-text">${{ (linea.subtotal || 0).toFixed(2) }}</span>
-    </div>
-    <div class="col-iva-val text-right">
-      <span class="total-text" :class="{'iva-active': linea.aplicaIva}">${{ (linea.valorIva || 0).toFixed(2) }}</span>
-    </div>
     <div class="col-total text-right">
       <input type="text" readonly :value="'$' + (linea.total || 0).toFixed(2)" class="form-control readonly-input text-right total-text" />
     </div>
@@ -136,18 +127,7 @@ const calcularSemana = () => {
 const calcularTotal = () => {
   const cant = linea.value.cantidad || 0
   const vu = linea.value.valorUnitario || 0
-  const subtotal = cant * vu
-  
-  linea.value.subtotal = subtotal
-  
-  // Asumiendo IVA de 15%
-  if (linea.value.aplicaIva) {
-    linea.value.valorIva = subtotal * 0.15
-  } else {
-    linea.value.valorIva = 0
-  }
-  
-  linea.value.total = subtotal + linea.value.valorIva
+  linea.value.total = cant * vu
 }
 
 const simularArchivo = () => {
@@ -315,29 +295,16 @@ const calcularHorasMaquinaria = () => {
   text-decoration: underline;
 }
 
-.iva-active {
-  color: #dc3545;
-}
-.form-check-input {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  margin-top: 5px;
-}
-
 /* Grid columns for alignment */
 .col-id { width: 3%; }
-.col-labor { width: 13%; }
-.col-detalle { width: 13%; }
+.col-labor { width: 18%; }
+.col-detalle { width: 18%; }
 .col-fecha { width: 8%; }
 .col-semana { width: 4%; }
 .col-lote { width: 8%; }
-.col-cant { width: 6%; }
+.col-cant { width: 8%; }
 .col-metrica { width: 5%; }
-.col-vunit { width: 7%; }
-.col-iva-check { width: 4%; }
-.col-subt { width: 7%; }
-.col-iva-val { width: 7%; }
-.col-total { width: 8%; }
+.col-vunit { width: 10%; }
+.col-total { width: 11%; }
 .col-acciones { width: 7%; }
 </style>

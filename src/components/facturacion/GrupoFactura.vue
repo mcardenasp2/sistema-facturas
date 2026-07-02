@@ -30,9 +30,6 @@
       <div class="col-cant text-right">CANT</div>
       <div class="col-metrica text-center">MET</div>
       <div class="col-vunit text-right">V.UNIT</div>
-      <div class="col-iva-check text-center">IVA</div>
-      <div class="col-subt text-right">SUBT</div>
-      <div class="col-iva-val text-right">V.IVA</div>
       <div class="col-total text-right">TOTAL</div>
       <div class="col-acciones text-center"></div>
     </div>
@@ -283,18 +280,15 @@ const intentarEliminarGrupo = () => {
 
 /* Grid columns for alignment */
 .col-id { width: 3%; }
-.col-labor { width: 13%; }
-.col-detalle { width: 13%; }
+.col-labor { width: 18%; }
+.col-detalle { width: 18%; }
 .col-fecha { width: 8%; }
 .col-semana { width: 4%; }
 .col-lote { width: 8%; }
-.col-cant { width: 6%; }
+.col-cant { width: 8%; }
 .col-metrica { width: 5%; }
-.col-vunit { width: 7%; }
-.col-iva-check { width: 4%; }
-.col-subt { width: 7%; }
-.col-iva-val { width: 7%; }
-.col-total { width: 8%; }
+.col-vunit { width: 10%; }
+.col-total { width: 11%; }
 .col-acciones { width: 7%; }
 
 .text-center { text-align: center; }
