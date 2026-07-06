@@ -17,7 +17,6 @@
               <span class="label">Contacto:</span> <span class="value">{{ facturaInfo.contacto }}</span>
               <span class="label">F. Documento:</span> <span class="value">{{ facturaInfo.fechaDoc }}</span>
               <span class="label">F. Vencimiento:</span> <span class="value">{{ facturaInfo.fechaVenc }}</span>
-              <span class="label">Nº Referencia:</span> <span class="value">{{ facturaInfo.referencia }}</span>
               <span class="label">Estado:</span> <span class="value"><span class="badge badge-green">{{ factura?.estado }}</span></span>
             </div>
           </div>
