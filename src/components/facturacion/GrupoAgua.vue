@@ -36,7 +36,7 @@
             <span class="read-text">${{ grupo.valorUnitario.toFixed(2) }}</span>
           </div>
           <div class="col-total">
-            <span class="total-text">${{ grupo.total.toFixed(2) }}</span>
+            <span class="total-text">${{ (grupo.cantidad * grupo.valorUnitario).toFixed(2) }}</span>
           </div>
         </div>
         

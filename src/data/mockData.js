@@ -8,6 +8,11 @@ export const fincas = [
   { id: 2, nombre: 'FINCA B - SECTOR SUR', codigo: 'F002' },
 ];
 
+export const proyectos = [
+  { id: 1, nombre: 'PROYECTO ALPHA' },
+  { id: 2, nombre: 'PROYECTO BETA' },
+];
+
 export const cuentasContables = {
   "MAQ": {
     cuenta: "5.01.04.08.006",

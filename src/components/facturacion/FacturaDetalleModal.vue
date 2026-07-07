@@ -57,7 +57,6 @@
                 <th>Labor finca</th>
                 <th>Cod. Finca</th>
                 <th>Proyecto</th>
-                <th class="text-center">IVA?</th>
                 <th class="text-center">Ind. Imp.</th>
                 <th class="text-center">Suj. Imp.</th>
                 <th class="text-center">Suj. Ret.</th>
@@ -80,9 +79,6 @@
                 <td class="text-center">{{ linea.codigoFinca }}</td>
                 <td class="text-center">{{ linea.proyecto }}</td>
                 <td class="text-center">
-                  <input type="checkbox" v-model="linea.aplicaIva" class="iva-check" />
-                </td>
-                <td class="text-center">
                   <span class="badge badge-gray">{{ getIndicadorImpuesto(linea) }}</span>
                 </td>
                 <td class="text-center">
@@ -102,7 +98,7 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="17" class="text-right"><strong>GRAN TOTAL</strong></td>
+                <td colspan="16" class="text-right"><strong>GRAN TOTAL</strong></td>
                 <td class="text-right"><strong>${{ granTotal.toFixed(2) }}</strong></td>
               </tr>
             </tfoot>
@@ -244,15 +240,15 @@ const granTotal = computed(() => {
 .modal-content {
   background: white;
   border-radius: 8px;
-  width: 90%;
+  width: 95%;
   max-width: 600px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 95vh;
 }
 .modal-lg {
-  max-width: 1000px;
+  max-width: 1400px;
 }
 .modal-header {
   display: flex;

@@ -7,7 +7,6 @@
     <!-- Header con botón flotante -->
     <div class="page-header">
       <div class="d-flex justify-content-between align-items-center">
-        <h2>3. Detalle de Líneas de Pago</h2>
         <div class="d-flex align-items-center gap-3">
           <span class="group-count"><i class='bx bx-list-check' style="font-size: 18px; vertical-align: middle;"></i> {{ factura.grupos.length }} grupos</span>
           <button class="btn btn-outline-blue" @click="agregarGrupo('agua')"><i class='bx bx-water'></i> Cargar Consumo Agua</button>
@@ -21,10 +20,22 @@
       <div class="cabecera-form mb-4">
         <div class="row">
           <div class="col" v-if="!tieneGrupoAgua">
-            <label>FINCA:</label>
-            <select v-model="factura.fincaId">
+            <label>TIPO:</label>
+            <select v-model="factura.tipo" @change="onTipoChange">
+              <option value="Hacienda">Hacienda</option>
+              <option value="Proyecto">Proyecto</option>
+            </select>
+          </div>
+          <div class="col" v-if="!tieneGrupoAgua">
+            <label v-if="factura.tipo === 'Hacienda'">FINCA:</label>
+            <label v-if="factura.tipo === 'Proyecto'">PROYECTO:</label>
+            <select v-if="factura.tipo === 'Hacienda'" v-model="factura.fincaId">
               <option value="">Seleccione una finca...</option>
               <option v-for="f in fincas" :key="f.id" :value="f.id">{{ f.nombre }}</option>
+            </select>
+            <select v-if="factura.tipo === 'Proyecto'" v-model="factura.proyectoId">
+              <option value="">Seleccione un proyecto...</option>
+              <option v-for="p in proyectos" :key="p.id" :value="p.id">{{ p.nombre }}</option>
             </select>
           </div>
           <div class="col">
@@ -83,11 +94,13 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import MainLayout from '../layouts/MainLayout.vue'
 import GrupoFactura from '../components/facturacion/GrupoFactura.vue'
-import { proveedores, fincas } from '../data/mockData'
+import { proveedores, fincas, proyectos } from '../data/mockData'
 
 const router = useRouter()
 
 const factura = ref({
+  tipo: 'Hacienda',
+  proyectoId: '',
   fincaId: '',
   proveedorId: '',
   ruc: '',
@@ -101,6 +114,14 @@ let grupoIdCounter = 0
 const tieneGrupoAgua = computed(() => {
   return factura.value.grupos.some(g => g.tipo === 'agua')
 })
+
+const onTipoChange = () => {
+  if (factura.value.tipo === 'Hacienda') {
+    factura.value.proyectoId = ''
+  } else {
+    factura.value.fincaId = ''
+  }
+}
 
 const onProveedorChange = () => {
   const prov = proveedores.find(p => p.id === factura.value.proveedorId)
